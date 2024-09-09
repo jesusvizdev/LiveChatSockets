@@ -5,7 +5,8 @@ from string import ascii_uppercase
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "a1kas7ak2"
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
+
 
 rooms = {}
 def generate_unique_code(length):
@@ -101,7 +102,7 @@ def message(data):
     }
     send(content, to=room)
     rooms[room]["messages"].append(content)
-    print(f"{session.get("name")} said: {data['data']}")
+    print(f"{session.get('name')} said: {data['data']}")
 
 if __name__ == "__main__":
     socketio.run(app, debug=True)

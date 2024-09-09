@@ -13,7 +13,9 @@
 </div>
 <script type="text/javascript">
 
-    let socketio = io();
+    const socketio = io.connect('https://jesusvizdev.pythonanywhere.com', {
+    transports: ['polling'] 
+    });
 
     const messages = document.getElementById("messages");
 
@@ -24,12 +26,19 @@
                 <strong>${name}</strong>: ${msg}
             </span>
             <span class="muted">
-                ${new Date().toLocaleDateString()}
+                ${new Date().toLocaleString()}
             <span>
         </div>
         `;
         messages.innerHTML += content;
 
+    };
+    
+    window.onload = () => {
+        const messagesList = JSON.parse('{{ messages | tojson | safe }}'); 
+        messagesList.forEach(msg => {
+            createMessage(msg.name, msg.message);
+        });
     };
 
     socketio.on("message", (data) => {
@@ -44,9 +53,4 @@
     };
 
 </script>
-{% for msg in messages %}
-    <script type="text/javascript">
-        createMessage("{{msg.name}}", "{{msg.message}}")
-    </script>
-{% endfor %}
 {% endblock %}
